@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { createWorker } from "tesseract.js";
     import { waitForVideo } from "./utils";
     const SCREEN_HOME = "HOME";
     const SCREEN_CAMERA = "CAMERA";
@@ -58,6 +59,16 @@
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const imageData = canvas.toDataURL("image/png");
+
+        const worker = await createWorker("swe", 1, {
+            logger: (m) => console.log(m),
+
+            corePath: "/tesseract-core.wasm.js",
+        });
+
+        const { data } = await worker.recognize(imageData);
+        text = data.text;
+        await worker.terminate();
 
         const resp = await fetch("/api/read", {
             method: "POST",
