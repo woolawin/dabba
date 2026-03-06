@@ -62,6 +62,7 @@
         "set-cookie-parser": "^3.0.1",
         "sirv": "^3.0.2",
         "source-map-js": "^1.2.1",
+        "tesseract.js": "^7.0.0",
         "tinyglobby": "^0.2.15",
         "totalist": "^3.0.1",
         "update-browserslist-db": "^1.2.3",

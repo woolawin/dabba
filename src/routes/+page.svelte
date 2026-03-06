@@ -88,6 +88,12 @@
         translation = payload;
         screen = SCREEN_TRANSLATION;
     }
+
+    function restart() {
+        text = "";
+        translation = null;
+        screen = SCREEN_HOME;
+    }
 </script>
 
 {#if screen == SCREEN_CAMERA}
@@ -124,7 +130,7 @@
 
 {#if screen == SCREEN_TEXT}
     <div class="text">
-        <textarea id="readtext" readonly>{text}</textarea>
+        <textarea id="readtext" rows="30" readonly>{text}</textarea>
         <button onclick={translate} class="translate">Translate</button>
     </div>
 {/if}
@@ -134,6 +140,7 @@
         <p>
             {translation?.translation}
         </p>
+        <button class="restart" onclick={restart}>Restart</button>
     </div>
 {/if}
 
@@ -161,7 +168,8 @@
         margin: 10px;
     }
 
-    .translate {
+    .translate,
+    .restart {
         border: none;
         height: 50px;
         background-color: #78c48c;
