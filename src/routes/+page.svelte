@@ -66,7 +66,19 @@
         screen = SCREEN_TEXT;
     }
 
-    function translate() {}
+    function translate() {
+        const textarea: HTMLTextAreaElement | null =
+            document.querySelector("readtext");
+        if (!textarea) {
+            return;
+        }
+        const selectedText = textarea.value.substring(
+            textarea.selectionStart,
+            textarea.selectionEnd,
+        );
+
+        alert(selectedText);
+    }
 </script>
 
 {#if screen == SCREEN_CAMERA}
@@ -103,7 +115,7 @@
 
 {#if screen == SCREEN_TEXT}
     <div class="text">
-        <textarea readonly>{text}</textarea>
+        <textarea id="readtext" readonly>{text}</textarea>
         <button onclick={translate} class="translate">Translate</button>
     </div>
 {/if}
