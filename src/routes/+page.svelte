@@ -3,10 +3,12 @@
     const SCREEN_HOME = "HOME";
     const SCREEN_CAMERA = "CAMERA";
     const SCREEN_TEXT = "TEXT";
+    const SCREEN_TRANSLATION = "TRANSLATION";
 
     let video: HTMLVideoElement | null;
     let screen: string = SCREEN_HOME;
     let text: string;
+    let translation: object | null;
 
     async function startCamera() {
         screen = SCREEN_CAMERA;
@@ -83,7 +85,8 @@
         });
         const payload = await resp.json();
 
-        alert(payload.translation);
+        translation = payload;
+        screen = SCREEN_TRANSLATION;
     }
 </script>
 
@@ -126,6 +129,14 @@
     </div>
 {/if}
 
+{#if screen == SCREEN_TRANSLATION}
+    <div class="translation">
+        <p>
+            {translation?.translation}
+        </p>
+    </div>
+{/if}
+
 <style>
     html,
     body {
@@ -134,25 +145,8 @@
         height: 100%;
     }
 
-    .text {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 100vw;
-        background-color: #efe6d2;
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        justify-content: space-around;
-    }
-
-    .translate {
-        border: none;
-        height: 50px;
-        background-color: #78c48c;
-    }
-
+    .text,
+    .translation,
     .home {
         position: absolute;
         top: 0;
@@ -164,6 +158,17 @@
         flex-direction: column;
         padding: 10px;
         justify-content: space-around;
+    }
+
+    .translation p {
+        text-align: center;
+    }
+
+    .translate {
+        border: none;
+        height: 50px;
+        background-color: #78c48c;
+        color: white;
     }
 
     .camera-feed {
@@ -180,6 +185,7 @@
         background-color: #6fa8d6;
         border: none;
         height: 50px;
+        color: white;
     }
 
     .close-btn {
