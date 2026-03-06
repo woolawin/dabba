@@ -5,6 +5,8 @@ export async function POST({ request }) {
 
     const worker = await createWorker("swe", 1, {
         logger: (m) => console.log(m),
+        corePath:
+            "https://unpkg.com/tesseract.js-core@2.1.5/tesseract-core.wasm.js",
     });
 
     const outpayload = {
