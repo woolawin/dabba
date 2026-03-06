@@ -57,16 +57,16 @@
 
         const imageData = canvas.toDataURL("image/png");
 
-        const req = await fetch("/api/read", {
+        const resp = await fetch("/api/read", {
             method: "POST",
             body: JSON.stringify({ image: imageData }),
         });
-        const resp = await req.json();
-        text = resp.text;
+        const payload = await resp.json();
+        text = payload.text;
         screen = SCREEN_TEXT;
     }
 
-    function translate() {
+    async function translate() {
         const textarea: HTMLTextAreaElement | null =
             document.querySelector("#readtext");
         if (!textarea) {
@@ -77,7 +77,13 @@
             textarea.selectionEnd,
         );
 
-        alert(selectedText);
+        const resp = await fetch("/api/translate", {
+            method: "POST",
+            body: JSON.stringify({ original: text, selected: selectedText }),
+        });
+        const payload = await resp.json();
+
+        alert(payload.translation);
     }
 </script>
 
