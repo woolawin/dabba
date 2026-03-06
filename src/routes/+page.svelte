@@ -1,42 +1,196 @@
 <script lang="ts">
-    let video: HTMLVideoElement;
+    import { waitForVideo } from "./utils";
+    const SCREEN_HOME = "HOME";
+    const SCREEN_CAMERA = "CAMERA";
+    const SCREEN_TEXT = "TEXT";
+
+    let video: HTMLVideoElement | null;
+    let screen: string = SCREEN_HOME;
+    let text: string;
 
     async function startCamera() {
-        if (!video) return;
+        screen = SCREEN_CAMERA;
+        video = await waitForVideo("video");
+
+        if (!video) {
+            console.log("could not get video");
+            return;
+        }
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
+                video: {
+                    facingMode: { ideal: "environment" },
+                },
             });
             video.srcObject = stream;
-            await video.play(); // muted + playsinline needed
+            await video.play();
         } catch (err) {
+            screen = SCREEN_HOME;
             console.error("Camera could not start:", err);
-            alert("Check camera permissions and HTTPS");
+            alert(err);
         }
     }
+
+    function closeCamera() {
+        video = null;
+        screen = SCREEN_HOME;
+    }
+
+    async function readPage() {
+        video = await waitForVideo("video");
+
+        if (!video) {
+            console.log("could not get video");
+            return;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+        if (ctx == null) {
+            return;
+        }
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageData = canvas.toDataURL("image/png");
+
+        const req = await fetch("/api/read", {
+            method: "POST",
+            body: JSON.stringify({ image: imageData }),
+        });
+        const resp = await req.json();
+        text = resp.text;
+        screen = SCREEN_TEXT;
+    }
+
+    function translate() {}
 </script>
 
-<video bind:this={video} autoplay muted playsinline class="camera-feed"></video>
-<button on:click={startCamera}>Start Camera</button>
+{#if screen == SCREEN_CAMERA}
+    <div>
+        <video id="video" autoplay muted playsinline class="camera-feed"
+        ></video>
+        <button class="close-btn" onclick={closeCamera}>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-xbox-x"
+                ><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+                    d="M12 21a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9a9 9 0 0 0 -9 9a9 9 0 0 0 9 9"
+                /><path d="M9 8l6 8" /><path d="M15 8l-6 8" /></svg
+            >
+            Close
+        </button>
+
+        <button class="read-btn" onclick={readPage}> Read </button>
+    </div>
+{/if}
+{#if screen == SCREEN_HOME}
+    <div class="home">
+        <button onclick={startCamera} class="take-picture">Take Picture</button>
+    </div>
+{/if}
+
+{#if screen == SCREEN_TEXT}
+    <div class="text">
+        <textarea readonly>{text}</textarea>
+        <button onclick={translate} class="translate">Translate</button>
+    </div>
+{/if}
 
 <style>
     html,
     body {
-        margin: 0;
-        padding: 0;
+        margin: 0 !important;
+        padding: 0 !important;
         height: 100%;
     }
+
+    .text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background-color: #efe6d2;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        justify-content: space-around;
+    }
+
+    .translate {
+        border: none;
+        height: 50px;
+        background-color: #78c48c;
+    }
+
+    .home {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background-color: #efe6d2;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        justify-content: space-around;
+    }
+
     .camera-feed {
         width: 100vw;
         height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
         object-fit: cover;
         display: block;
     }
-    button {
+
+    .take-picture {
+        background-color: #6fa8d6;
+        border: none;
+        height: 50px;
+    }
+
+    .close-btn {
         position: absolute;
-        top: 1rem;
-        left: 1rem;
-        z-index: 10;
+        top: 50px;
+        left: 10px;
+        right: 10px;
+        color: white;
+        background-color: transparent;
+        border-radius: 5px;
+        box-shadow: none;
+        appearance: none;
+        border-color: white;
+        padding: 10px;
+        font-size: 24px;
+    }
+
+    .read-btn {
+        position: absolute;
+        bottom: 50px;
+        left: 10px;
+        right: 10px;
+        color: white;
+        background-color: transparent;
+        border-radius: 5px;
+        box-shadow: none;
+        appearance: none;
+        border-color: white;
+        padding: 10px;
+        font-size: 24px;
     }
 </style>
