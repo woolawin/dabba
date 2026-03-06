@@ -62,7 +62,6 @@
 
         const worker = await createWorker("swe", 1, {
             logger: (m) => console.log(m),
-
             corePath: "/tesseract-core.wasm.js",
         });
 
@@ -70,12 +69,6 @@
         text = data.text;
         await worker.terminate();
 
-        const resp = await fetch("/api/read", {
-            method: "POST",
-            body: JSON.stringify({ image: imageData }),
-        });
-        const payload = await resp.json();
-        text = payload.text;
         screen = SCREEN_TEXT;
     }
 
