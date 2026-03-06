@@ -138,13 +138,6 @@
 {/if}
 
 <style>
-    html,
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-        height: 100%;
-    }
-
     .text,
     .translation,
     .home {
@@ -156,12 +149,16 @@
         background-color: #efe6d2;
         display: flex;
         flex-direction: column;
-        padding: 10px;
         justify-content: space-around;
     }
 
     .translation p {
         text-align: center;
+        margin: 10px;
+    }
+
+    #readtext {
+        margin: 10px;
     }
 
     .translate {
@@ -169,6 +166,7 @@
         height: 50px;
         background-color: #78c48c;
         color: white;
+        margin: 10px;
     }
 
     .camera-feed {
@@ -186,6 +184,7 @@
         border: none;
         height: 50px;
         color: white;
+        margin: 10px;
     }
 
     .close-btn {
