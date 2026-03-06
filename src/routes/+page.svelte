@@ -68,7 +68,7 @@
 
     function translate() {
         const textarea: HTMLTextAreaElement | null =
-            document.querySelector("readtext");
+            document.querySelector("#readtext");
         if (!textarea) {
             return;
         }
