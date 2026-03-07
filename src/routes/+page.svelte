@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createWorker } from "tesseract.js";
+    import { createWorker, PSM } from "tesseract.js";
     import { waitForVideo } from "./utils";
     const SCREEN_HOME = "HOME";
     const SCREEN_CAMERA = "CAMERA";
@@ -63,6 +63,13 @@
         const worker = await createWorker("swe", 1, {
             logger: (m) => console.log(m),
             corePath: "/tesseract-core.wasm.js",
+        });
+        await worker.setParameters({
+            tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
+            tessedit_char_whitelist:
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789",
+            load_system_dawg: "0",
+            load_freq_dawg: "0",
         });
 
         const { data } = await worker.recognize(imageData);

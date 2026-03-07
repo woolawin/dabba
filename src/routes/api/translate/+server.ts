@@ -9,7 +9,7 @@ export async function POST({ request }) {
     });
 
     const response = await client.responses.create({
-        model: "gpt-5",
+        model: "gpt-5.1",
         input: [
             { role: "user", content: "From the following Swedish text" },
             { role: "user", content: data.original },
