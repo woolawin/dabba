@@ -67,7 +67,7 @@
         await worker.setParameters({
             tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
             tessedit_char_whitelist:
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789.,:;!?()-/%@#'\"",
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789.,:;!?()-/%@#'\"\t\n ",
             load_system_dawg: "0",
             load_freq_dawg: "0",
         });
