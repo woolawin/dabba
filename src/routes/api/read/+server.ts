@@ -1,23 +1,26 @@
-import { createWorker } from "tesseract.js";
+import vision from "@google-cloud/vision";
+
+import { GOOGLE_SA_EMAIL, GOOGLE_SA_KEY } from "$env/static/private";
 
 export async function POST({ request }) {
     const data = await request.json();
 
-    const worker = await createWorker("swe", 1, {
-        logger: (m) => console.log(m),
-        corePath:
-            "https://unpkg.com/tesseract.js-core@2.1.5/tesseract-core.wasm.js",
+    const client = new vision.ImageAnnotatorClient({
+        credentials: {
+            client_email: GOOGLE_SA_EMAIL,
+            private_key: GOOGLE_SA_KEY.replace(/\\n/g, "\n"),
+        },
+    });
+
+    const base64Image = data.image.replace(/^data:image\/\w+;base64,/, "");
+
+    const [result] = await client.documentTextDetection({
+        image: { content: base64Image },
     });
 
     const outpayload = {
-        text: "",
+        text: result.fullTextAnnotation?.text || "",
     };
-
-    const {
-        data: { text },
-    } = await worker.recognize(data.image);
-    outpayload.text = text;
-    await worker.terminate();
 
     return new Response(JSON.stringify(outpayload), {
         status: 200,

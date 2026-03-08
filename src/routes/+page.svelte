@@ -5,6 +5,7 @@
     const SCREEN_CAMERA = "CAMERA";
     const SCREEN_TEXT = "TEXT";
     const SCREEN_TRANSLATION = "TRANSLATION";
+    const SCREEN_PICTURE = "PICTURE";
 
     let video: HTMLVideoElement | null;
     let screen: string = SCREEN_HOME;
@@ -58,21 +59,16 @@
         }
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // const imageData = canvas.toDataURL("image/png");
-
-        const worker = await createWorker("swe", 1, {
-            logger: (m) => console.log(m),
-            corePath: "/tesseract-core.wasm.js",
-        });
-        await worker.setParameters({
-            // tessedit_char_whitelist:
-            // "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789.,:;!?()-/%@#'\"\t\n ",
-            // tessedit_pageseg_mode: PSM.AUTO,
-        });
         preprocess(canvas);
-        const { data } = await worker.recognize(canvas);
-        text = data.text;
-        await worker.terminate();
+        const imageData = canvas.toDataURL("image/png");
+
+        const resp = await fetch("/api/read", {
+            method: "POST",
+            body: JSON.stringify({ image: imageData }),
+        });
+        const payload = await resp.json();
+
+        text = payload.text;
 
         screen = SCREEN_TEXT;
     }

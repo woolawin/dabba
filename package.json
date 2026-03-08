@@ -26,6 +26,7 @@
     "description": "Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).",
     "main": "svelte.config.js",
     "dependencies": {
+        "@google-cloud/vision": "^5.3.4",
         "acorn": "^8.16.0",
         "aria-query": "^5.3.1",
         "axobject-query": "^4.1.0",
