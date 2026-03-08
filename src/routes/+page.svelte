@@ -65,8 +65,9 @@
             corePath: "/tesseract-core.wasm.js",
         });
         await worker.setParameters({
-            tessedit_char_whitelist:
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789.,:;!?()-/%@#'\"\t\n ",
+            // tessedit_char_whitelist:
+            // "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789.,:;!?()-/%@#'\"\t\n ",
+            tessedit_pageseg_mode: PSM.AUTO,
         });
 
         const { data } = await worker.recognize(imageData);
