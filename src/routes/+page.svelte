@@ -58,7 +58,7 @@
         }
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        const imageData = canvas.toDataURL("image/png");
+        // const imageData = canvas.toDataURL("image/png");
 
         const worker = await createWorker("swe", 1, {
             logger: (m) => console.log(m),
@@ -69,12 +69,31 @@
             // "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö0123456789.,:;!?()-/%@#'\"\t\n ",
             // tessedit_pageseg_mode: PSM.AUTO,
         });
-
-        const { data } = await worker.recognize(imageData);
+        preprocess(canvas);
+        const { data } = await worker.recognize(canvas);
         text = data.text;
         await worker.terminate();
 
         screen = SCREEN_TEXT;
+    }
+    function preprocess(canvas: HTMLCanvasElement) {
+        const ctx = canvas.getContext("2d");
+        if (ctx == null) {
+            return;
+        }
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+            const gray = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            const val = gray > 140 ? 255 : 0;
+
+            data[i] = val;
+            data[i + 1] = val;
+            data[i + 2] = val;
+        }
+
+        ctx.putImageData(imgData, 0, 0);
     }
 
     async function translate() {
