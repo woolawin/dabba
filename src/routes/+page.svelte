@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { createWorker, PSM } from "tesseract.js";
     import { waitForVideo } from "./utils";
     const SCREEN_HOME = "HOME";
     const SCREEN_CAMERA = "CAMERA";
